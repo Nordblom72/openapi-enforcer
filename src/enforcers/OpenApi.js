@@ -63,6 +63,8 @@ module.exports = {
             const operation = pathEnforcer[method];
             const pathParams = operation.parametersMap.path;
             const params = pathMatch.params;
+            const pathKey = pathMatch.pathKey;
+
             if (pathParams) {
                 const child = exception.nest('Error in one or more path parameters');
                 Object.keys(pathParams).forEach(name => {
@@ -83,7 +85,8 @@ module.exports = {
             if (exception.hasException) return new Result(undefined, exception);
             return new Result({
                 operation,
-                params
+                params,
+                pathKey
             });
         },
 
@@ -122,7 +125,7 @@ module.exports = {
             if (error) return new Result(undefined, error);
 
             // set up request input
-            const { operation, params } = pathObject;
+            const { operation, params, pathKey } = pathObject;
             const req = {
                 headers: request.headers || {},
                 path: params,
@@ -133,6 +136,7 @@ module.exports = {
             const result = operation.request(req, options);
             if (result.value) {
                 result.value.operation = operation;
+                result.value.pathKey = pathKey;
                 result.value.response = (code, body, headers = {}) => {
                     headers = util.lowerCaseObjectProperties(headers);
                     if (!headers['content-type'] && req.headers.accept) {

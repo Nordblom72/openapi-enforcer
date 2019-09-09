@@ -62,7 +62,7 @@ module.exports = {
                         const name = definitionParameters[i];
                         if (!parameterNames.includes(name)) pathParametersMissing.push(name);
                     }
-                    if (pathParametersMissing.length) child.message('Path missing defined parameters: ' + pathParametersMissing.join(', '));
+                    if (pathParametersMissing.length) child.nest('Path missing defined parameters: ' + pathParametersMissing.join(', '));
 
                     const stringCount = parameterNames.length;
                     const definitionParametersMissing = [];
@@ -70,7 +70,7 @@ module.exports = {
                         const name = parameterNames[i];
                         if (!definitionParameters.includes(name)) definitionParametersMissing.push(name);
                     }
-                    if (definitionParametersMissing.length) child.message('Definition missing path parameters: ' + definitionParametersMissing.join(', '));
+                    if (definitionParametersMissing.length) child.nest('Definition missing path parameters: ' + definitionParametersMissing.join(', '));
                 });
 
                 // build search regular expression
@@ -98,12 +98,12 @@ module.exports = {
                 if (!paramlessMap[equivalencyKey]) paramlessMap[equivalencyKey] = [];
                 const paramless = paramlessMap[equivalencyKey];
 
-                if (!pathEquivalencies[equivalencyKey]) pathEquivalencies[equivalencyKey] = [];
-                if (pathEquivalencies[equivalencyKey].length === 0) pathEquivalencies[equivalencyKey].push(pathKey);
+                if (!pathEquivalencies[pathKey]) pathEquivalencies[pathKey] = [];
+                if (pathEquivalencies[pathKey].length === 0) pathEquivalencies[pathKey].push(pathKey);
                 if (!paramless.includes(paramlessStr)) {
                     paramless.push(paramlessStr);
                 } else {
-                    pathEquivalencies[equivalencyKey].push(pathKey);
+                    pathEquivalencies[pathKey].push(pathKey);
                 }
 
                 // define parser function
@@ -119,7 +119,8 @@ module.exports = {
 
                     return {
                         params: pathParams,
-                        path
+                        path,
+                        pathKey
                     };
                 };
 
